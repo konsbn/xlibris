@@ -29,6 +29,7 @@ def _cleanify(bookMeta):
     bookMeta['Title'] = title
     auth = bookMeta['Authors']
     auth = auth.split(",")[0]
+    auth = auth.split(";")[0]
     auth = auth.split("illustrated", 1)[0]
     auth = auth.split("and", 1)[0]
     auth = auth.split("with", 1)[0]
