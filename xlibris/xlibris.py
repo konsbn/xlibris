@@ -255,6 +255,10 @@ class xlibris_repl(cmd.Cmd):
         '''Helps you change the Author of the book you have added.
         changeAuthor ISBN to change the author of the book'''
         self.current_db.change_author(args)
+    def do_changePublisher(self, args):
+        '''Helps you change the Publisher of the book you have added.
+        changeAuthor ISBN to change the author of the book'''
+        self.current_db.change_publisher(args)
     def emptyline(self):
         print '''Create a new database using new or connect to existing database using connect
         or type help to see a list of available commands. You can connect to one of the following
