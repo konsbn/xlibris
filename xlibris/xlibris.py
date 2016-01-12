@@ -146,6 +146,16 @@ class xlibris(object):
         print 'Change author of :- {}'.format(title['Title'])
         self.db.update(change('Authors'), tmp.ISBN == isbn )
         print 'Entry Updated'
+    def change_publisher(self, isbn):
+        tmp = Query()
+        def change(field):
+            def transform(element):
+                element[field] = raw_input('Enter Publisher ')
+            return transform
+        title = self.db.search(tmp.ISBN == isbn)[0]
+        print 'Change Publisher of :- {}'.format(title['Title'])
+        self.db.update(change('Publisher'), tmp.ISBN == isbn )
+        print 'Entry Updated'
     def write_to_file(self, filename):
         try:
             data = tabulate(_concat(self.db.all()), headers='keys', tablefmt="simple")
