@@ -9,6 +9,7 @@ from tabulate import *
 from pyfiglet import Figlet
 from isbntools.app import meta
 from tinydb import TinyDB, Query
+from tinydb.operations import delete
 from collections import defaultdict
 ##########################################################
 def _concat(data):
@@ -225,7 +226,10 @@ class xlibris_repl(cmd.Cmd):
         self.current_db.add(args)
     def default(self, args):
         '''Adds the book to current database when just ISBN is typed'''
-        self.current_db.add(args)
+        try:
+            self.current_db.add(str(int(args)))
+        except ValueError:
+            print "Only ISBN, to see a list of functions type help"
     def do_display(self, args):
         '''Prints the current database to screen'''
         self.current_db.display()
@@ -250,15 +254,24 @@ class xlibris_repl(cmd.Cmd):
     def do_changeTitle(self, args):
         '''Helps you change title of the book you have added.
         changeTitle ISBN to change the title of the book'''
-        self.current_db.change_title(args)
+        try:
+            self.current_db.change_title(args)
+        except IndexError:
+            print 'You have to enter the correct ISBN too'
     def do_changeAuthor(self, args):
         '''Helps you change the Author of the book you have added.
         changeAuthor ISBN to change the author of the book'''
-        self.current_db.change_author(args)
+        try:
+            self.current_db.change_author(args)
+        except IndexError:
+            print 'You have to enter the correct ISBN too'
     def do_changePublisher(self, args):
         '''Helps you change the Publisher of the book you have added.
         changeAuthor ISBN to change the author of the book'''
-        self.current_db.change_publisher(args)
+        try:
+            self.current_db.change_publisher(args)
+        except IndexError:
+            print 'You have to enter the correct ISBN too'
     def emptyline(self):
         print '''Create a new database using new or connect to existing database using connect
         or type help to see a list of available commands. You can connect to one of the following
@@ -267,5 +280,6 @@ class xlibris_repl(cmd.Cmd):
     def do_shell(self, args):
         '''Use shell commands by affixing them with ! sign'''
         os.system(args)
+#TODO - Add remove function
 if __name__ == '__main__':
     xlibris_repl().cmdloop()
