@@ -168,6 +168,16 @@ class xlibris(object):
         print 'Written to {}'.format('xlibris/' + filename + '.txt')
     def purge_current(self):
         self.db.purge()
+    def remove(self, isbn):
+        tmp = Query()
+        resp = raw_input('Delete \n {} \n ? (y/n)'.format(tabulate(self.db.search(tmp.ISBN == isbn), headers='keys')))
+        resp = resp.lower()
+        if resp == 'y':
+            for i in ['Publisher', 'Title', 'Authors', 'Year', 'Date Added', 'Language', 'ISBN']:
+                self.db.update(delete(i), tmp.ISBN == isbn)
+            print 'Deleted'
+        elif resp == 'n':
+            print 'Spared'
 ##############CONSOLE##############################
 class xlibris_repl(cmd.Cmd):
     def __init__(self):
@@ -193,9 +203,13 @@ class xlibris_repl(cmd.Cmd):
         Databases are stored as .json files
         simply type list_db to view available databases'''
         # listdb += [i for i in os.listdir('xlibris/') if i.endswith('.json')]
+        listdb = {}
+        dbs = []
         for i in os.listdir('xlibris/'):
             if i.endswith('.json'):
-                print i
+                dbs.append(i)
+        listdb['Databases'] = dbs
+        print tabulate(listdb, headers='keys', tablefmt='fancy_grid')
     def do_help(self, args):
         '''Get help on commands.
         type help for a list of available commands
@@ -280,6 +294,11 @@ class xlibris_repl(cmd.Cmd):
     def do_shell(self, args):
         '''Use shell commands by affixing them with ! sign'''
         os.system(args)
+    def do_remove(self, args):
+        '''Remove a book from the database.
+        remove <isbn>
+        * ALthough I have no idea why anyone would use this heinous function'''
+        self.current_db.remove(args)
 #TODO - Add remove function
 if __name__ == '__main__':
     xlibris_repl().cmdloop()
