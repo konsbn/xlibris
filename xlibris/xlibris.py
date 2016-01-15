@@ -73,6 +73,8 @@ class xlibris(object):
     def display(self):
         try:
             print tabulate(_concat(self.db.all()), headers='keys', tablefmt="simple")
+            print "\n"
+            print self.count()
         except AttributeError:
             print 'No database Connected'
     def add(self, ISBN):
@@ -178,6 +180,10 @@ class xlibris(object):
             print 'Deleted'
         elif resp == 'n':
             print 'Spared'
+    def count(self):
+        listisbn = _concat(self.db.all())
+        listisbn = listisbn.pop('ISBN')
+        return "Total {} books.".format(len(listisbn))
 ##############CONSOLE##############################
 class xlibris_repl(cmd.Cmd):
     def __init__(self):
@@ -189,6 +195,7 @@ class xlibris_repl(cmd.Cmd):
         Author - Shubham Bhushan
         '''
         self.current_db = xlibris()
+        self.lst = ''
     def do_hist(self, args):
         '''Prints the list of commands entered recently'''
         print self._hist
