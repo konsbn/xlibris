@@ -5,3 +5,7 @@ A very simple and small console based library management system written in pytho
 
 ![Alt text](https://github.com/konsbn/xlibris/blob/master/xlibris.png)
 
+##TODO
+  - [ ] Document the Code better
+  - [ ] Upload to Pypi so it may be installed via pip
+  - [ ] In Situ Pdf generation using Pandoc
