@@ -77,7 +77,10 @@ class xlibris(object):
             print "\n"
             print self.count()
         except AttributeError:
-            print 'No database Connected'
+            print '''No database Connected,
+             to see a list of available databases use list_db
+             or to make a new database use new'''
+
     def add(self, ISBN):
         '''Add books to the current working database
             Usage:-
@@ -114,8 +117,8 @@ class xlibris(object):
 
         for i in ttable:
             if i:
-                print 'Matches Found for {}'.format(keyword)
-                print tabulate(_concat(i), headers='keys', tablefmt="simple")
+                print 'Matches Found for {} \n'.format(keyword)
+                print tabulate(_concat(i), headers='keys', tablefmt="fancy_grid")
     def _blkadd(self, ISBNlist):
         with tqdm(ISBNlist) as pbar:
             for i in pbar:
@@ -167,6 +170,10 @@ class xlibris(object):
             print 'No database Connected'
         f = open('xlibris/' + filename + '.txt', 'w')
         f.write(data.encode('utf8'))
+        f.write('\n'.encode('utf8'))
+        f.write('--------------------'.encode('utf8'))
+        f.write('\n'.encode('utf8'))
+        f.write(self.count().encode('utf8'))
         f.close()
         print 'Written to {}'.format('xlibris/' + filename + '.txt')
     def purge_current(self):
@@ -186,8 +193,10 @@ class xlibris(object):
         title = data.pop('Title')
         auth = data.pop('Authors')
         choices = title + auth
-        searchKey = process.extractOne(keyword, choices)[0]
-        self.search(searchKey)
+        searchKey = process.extractBests(keyword, choices)
+        for i in searchKey:
+            if i[1] >= 90:
+                self.search(i[0])
     def count(self):
         listisbn = _concat(self.db.all())
         listisbn = listisbn.pop('ISBN')
@@ -196,6 +205,7 @@ class xlibris(object):
 class xlibris_repl(cmd.Cmd):
     def __init__(self):
         cmd.Cmd.__init__(self)
+        os.system('clear')
         self.prompt = 'xLibris>> '
         self.intro = _intro + '''A small library management system for your books written in python.
         Connect to a database and then just type the ISBN to add a book.
