@@ -5,10 +5,11 @@ import readline
 import datetime
 from csv import *
 from tqdm import tqdm
-from tabulate import *
+from tabulate import tabulate
 from pyfiglet import Figlet
 from isbntools.app import meta
 from tinydb import TinyDB, Query
+from fuzzywuzzy import fuzz, process
 from tinydb.operations import delete
 from collections import defaultdict
 ##########################################################
@@ -180,6 +181,13 @@ class xlibris(object):
             print 'Deleted'
         elif resp == 'n':
             print 'Spared'
+    def lookup(self, keyword):
+        data = _concat(self.db.all())
+        title = data.pop('Title')
+        auth = data.pop('Authors')
+        choices = title + auth
+        searchKey = process.extractOne(keyword, choices)[0]
+        self.search(searchKey)
     def count(self):
         listisbn = _concat(self.db.all())
         listisbn = listisbn.pop('ISBN')
@@ -260,6 +268,10 @@ class xlibris_repl(cmd.Cmd):
         search <keyword>
         legal keywords include ISBN, author, Title. '''
         self.current_db.search(args)
+    def do_lookup(self, args):
+        '''Fuzzy Searching can search from partial titles or Author Names
+        lookup <keyword>'''
+        self.current_db.lookup(args)
     def do_addFromFile(self, args):
         '''Add books from a csv file containing ISBNs.
         type add_from_file <path/filename.csv>'''
